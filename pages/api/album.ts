@@ -1,17 +1,17 @@
 import type { NextApiRequest, NextApiResponse } from "next"
-import { ApiSong, Song } from "../../src/entities"
+import { Album, ApiAlbum } from "../../src/entities"
 import { BasicApiHandler } from "../../src/basicApiHandler"
 
-const apiHandler = new BasicApiHandler<ApiSong | string, Song>(
-    Song,
-    Song.keys,
+const apiHandler = new BasicApiHandler<ApiAlbum | string, Album>(
+    Album,
+    Album.keys,
     // @ts-expect-error Temporary
     null
 )
 
 export default function handler(
     req: NextApiRequest,
-    res: NextApiResponse<ApiSong | string>
+    res: NextApiResponse<ApiAlbum | string>
 ) {
     apiHandler.dispatch(req, res)
 }

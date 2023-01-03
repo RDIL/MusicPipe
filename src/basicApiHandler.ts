@@ -54,9 +54,13 @@ export class BasicApiHandler<ApiType, BaseType extends JsonStringifyable> {
         res.status(404).send(`No ${this.entity.name} found with id: ${id}`)
     }
 
-    async post(req: NextApiRequest, res: NextApiResponse<ApiType | string>) {}
+    async post(req: NextApiRequest, res: NextApiResponse<ApiType | string>) {
+        res.status(500).send("Not implemented")
+    }
 
-    async put(req: NextApiRequest, res: NextApiResponse<ApiType | string>) {}
+    async put(req: NextApiRequest, res: NextApiResponse<ApiType | string>) {
+        res.status(500).send("Not implemented")
+    }
 
     async delete(req: NextApiRequest, res: NextApiResponse<ApiType | string>) {
         res.status(500).send("Not implemented")
