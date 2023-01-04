@@ -1,9 +1,9 @@
 import React from "react"
-import { ApiArtist } from "./entities"
 import Link from "next/link"
+import { Artist } from "./api-generated"
 
 export interface FormattedArtistListProps {
-    artists: ApiArtist[]
+    artists: Artist[]
 }
 
 export function FormattedArtistList({ artists }: FormattedArtistListProps) {

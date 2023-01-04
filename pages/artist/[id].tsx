@@ -3,11 +3,11 @@ import { GetServerSidePropsContext, GetServerSidePropsResult } from "next"
 import React from "react"
 import { randomUUID } from "crypto"
 import { Tracklist } from "../../src/Tracklist"
-import { ApiArtist, ApiSong, Artist, Song } from "../../src/entities"
+import { Artist, Song } from "../../src/api-generated"
 
 interface ArtistProfileProps {
-    artist: ApiArtist
-    songs: ApiSong[]
+    artist: Artist
+    songs: Song[]
 }
 
 export async function getServerSideProps(
@@ -15,19 +15,25 @@ export async function getServerSideProps(
 ): Promise<GetServerSidePropsResult<ArtistProfileProps>> {
     console.log(context.params)
 
-    const placeholderArtist = Artist.from(randomUUID(), "Placeholder Artist")
+    const placeholderArtist = await prisma?.artist.create({
+        data: {
+            id: randomUUID(),
+            name: "Placeholder Artist",
+        },
+    })!
 
-    const placeholderSong = Song.from(randomUUID(), "Placeholder Song")
-    placeholderSong.primaryArtists = [placeholderArtist]
-    placeholderSong.producers = [placeholderArtist]
-    placeholderSong.writers = [placeholderArtist]
-    placeholderSong.albums = []
-    placeholderSong.featuredArtists = []
+    const placeholderSong: Song = await prisma?.song.create({
+        data: {
+            id: randomUUID(),
+            title: "Placeholder Song",
+            primaryArtistIds: [placeholderArtist.id],
+        },
+    })!
 
     return {
         props: {
-            artist: placeholderArtist.toJSON(),
-            songs: [placeholderSong.toJSON()],
+            artist: placeholderArtist,
+            songs: [placeholderSong],
         },
     }
 }
@@ -47,7 +53,11 @@ export default function ArtistProfile({ artist, songs }: ArtistProfileProps) {
             <main>
                 <h1>MusicMeta</h1>
 
-                <Tracklist tracks={songs}></Tracklist>
+                <p>
+                    {artist.name} {artist.id} {JSON.stringify(artist.aliases)}
+                </p>
+
+                <Tracklist tracks={songs} />
             </main>
         </>
     )

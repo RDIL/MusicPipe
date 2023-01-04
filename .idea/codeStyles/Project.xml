@@ -31,6 +31,12 @@
     <codeStyleSettings language="JavaScript">
       <option name="SOFT_MARGINS" value="80" />
     </codeStyleSettings>
+    <codeStyleSettings language="Prisma">
+      <indentOptions>
+        <option name="INDENT_SIZE" value="4" />
+        <option name="TAB_SIZE" value="4" />
+      </indentOptions>
+    </codeStyleSettings>
     <codeStyleSettings language="TypeScript">
       <option name="SOFT_MARGINS" value="80" />
     </codeStyleSettings>

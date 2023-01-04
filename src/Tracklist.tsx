@@ -8,14 +8,15 @@ import {
     TableRow,
 } from "@mui/material"
 import React from "react"
-import { ApiSong } from "./entities"
 import { FormattedSongName } from "./FormattedSongName"
+import { Artist, Song } from "./api-generated"
 
 export interface TracklistProps {
-    tracks: ApiSong[]
+    tracks: Song[]
+    trackFeats: Artist[][]
 }
 
-export function Tracklist({ tracks }: TracklistProps) {
+export function Tracklist({ tracks, trackFeats }: TracklistProps) {
     return (
         <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -28,7 +29,7 @@ export function Tracklist({ tracks }: TracklistProps) {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {tracks.map((track) => (
+                    {tracks.map((track, index) => (
                         <TableRow
                             key={track.title}
                             sx={{
@@ -38,7 +39,10 @@ export function Tracklist({ tracks }: TracklistProps) {
                             }}
                         >
                             <TableCell component="th" scope="row">
-                                <FormattedSongName song={track} />
+                                <FormattedSongName
+                                    song={track}
+                                    featuredArtists={trackFeats[index]}
+                                />
                             </TableCell>
                             <TableCell align="right">{track.title}</TableCell>
                             <TableCell align="right">{track.title}</TableCell>
