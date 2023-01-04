@@ -763,7 +763,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:18.11.18, @types/node@npm:^18.11.11":
+"@types/node@npm:*, @types/node@npm:^18.11.11, @types/node@npm:^18.11.18":
   version: 18.11.18
   resolution: "@types/node@npm:18.11.18"
   checksum: bd39552701928d4a1613bc46adf8b65f8212064c2b5475a67161b6c4cef21ddb0a5c2ba062673213f8f5301ef6e171241a9e274a9b59c9fc1f5e2b69764740eb
@@ -784,7 +784,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:18.0.10":
+"@types/react-dom@npm:^18.0.10":
   version: 18.0.10
   resolution: "@types/react-dom@npm:18.0.10"
   dependencies:
@@ -811,7 +811,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:18.0.26":
+"@types/react@npm:*, @types/react@npm:^18.0.26":
   version: 18.0.26
   resolution: "@types/react@npm:18.0.26"
   dependencies:
@@ -1698,7 +1698,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-config-next@npm:13.1.1":
+"eslint-config-next@npm:^13.1.1":
   version: 13.1.1
   resolution: "eslint-config-next@npm:13.1.1"
   dependencies:
@@ -1876,7 +1876,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:8.31.0":
+"eslint@npm:^8.31.0":
   version: 8.31.0
   resolution: "eslint@npm:8.31.0"
   dependencies:
@@ -2932,13 +2932,13 @@ __metadata:
     "@next-auth/prisma-adapter": "npm:^1.0.5"
     "@next/font": "npm:13.1.1"
     "@prisma/client": "npm:^4.8.0"
-    "@types/node": "npm:18.11.18"
+    "@types/node": "npm:^18.11.18"
     "@types/prop-types": "npm:^15"
-    "@types/react": "npm:18.0.26"
-    "@types/react-dom": "npm:18.0.10"
+    "@types/react": "npm:^18.0.26"
+    "@types/react-dom": "npm:^18.0.10"
     "@yarnpkg/pnpify": "npm:^4.0.0-rc.34"
-    eslint: "npm:8.31.0"
-    eslint-config-next: "npm:13.1.1"
+    eslint: "npm:^8.31.0"
+    eslint-config-next: "npm:^13.1.1"
     next: "npm:13.1.1"
     next-auth: "npm:^4.18.7"
     prettier: "npm:^2.8.1"
