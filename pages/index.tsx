@@ -4,8 +4,8 @@ export default function Home() {
     return (
         <>
             <Head>
-                <title>MusicMeta</title>
-                <meta name="description" content="MusicMeta" />
+                <title>MusicPipe</title>
+                <meta name="description" content="MusicPipe" />
                 <meta
                     name="viewport"
                     content="width=device-width, initial-scale=1"
@@ -13,7 +13,7 @@ export default function Home() {
             </Head>
 
             <main>
-                <h1>MusicMeta</h1>
+                <h1>MusicPipe</h1>
             </main>
         </>
     )

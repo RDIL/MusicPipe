@@ -6,7 +6,7 @@ import { PrismaClient } from "../../../src/api-generated"
 export default NextAuth({
     providers: [
         CredentialsProvider({
-            name: "MusicMeta",
+            name: "MusicPipe",
             credentials: {
                 username: {
                     label: "Username",

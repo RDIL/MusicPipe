@@ -43,7 +43,7 @@ export default function ArtistProfile({ artist, songs }: ArtistProfileProps) {
         <>
             <Head>
                 <title>Artist Profile: Test</title>
-                <meta name="description" content="MusicMeta" />
+                <meta name="description" content="MusicPipe" />
                 <meta
                     name="viewport"
                     content="width=device-width, initial-scale=1"
@@ -51,7 +51,7 @@ export default function ArtistProfile({ artist, songs }: ArtistProfileProps) {
             </Head>
 
             <main>
-                <h1>MusicMeta</h1>
+                <h1>MusicPipe</h1>
 
                 <p>
                     {artist.name} {artist.id} {JSON.stringify(artist.aliases)}
