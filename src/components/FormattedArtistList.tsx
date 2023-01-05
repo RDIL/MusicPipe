@@ -1,6 +1,6 @@
 import React from "react"
 import Link from "next/link"
-import { Artist } from "./api-generated"
+import { Artist } from "../api-generated"
 
 export interface FormattedArtistListProps {
     artists: Artist[]
@@ -23,7 +23,6 @@ export function FormattedArtistList({ artists }: FormattedArtistListProps) {
                     // @ts-expect-error We're fine
                     [prev, <>{", "}</>, curr]
                 )}
-            )
         </span>
     )
 }

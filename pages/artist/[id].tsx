@@ -2,12 +2,15 @@ import Head from "next/head"
 import { GetServerSidePropsContext, GetServerSidePropsResult } from "next"
 import React from "react"
 import { randomUUID } from "crypto"
-import { Tracklist } from "../../src/Tracklist"
+import { Tracklist } from "../../src/components/Tracklist"
 import { Artist, Song } from "../../src/api-generated"
+import prismaInstance from "../../src/prisma"
+import { CompleteSong, getCompleteSong } from "../../src/apiExtended"
+import { ArtistCard } from "../../src/components/ArtistCard"
 
 interface ArtistProfileProps {
     artist: Artist
-    songs: Song[]
+    songs: CompleteSong[]
 }
 
 export async function getServerSideProps(
@@ -15,14 +18,14 @@ export async function getServerSideProps(
 ): Promise<GetServerSidePropsResult<ArtistProfileProps>> {
     console.log(context.params)
 
-    const placeholderArtist = await prisma?.artist.create({
+    const placeholderArtist = await prismaInstance.artist.create({
         data: {
             id: randomUUID(),
             name: "Placeholder Artist",
         },
     })!
 
-    const placeholderSong: Song = await prisma?.song.create({
+    const placeholderSong: Song = await prismaInstance.song.create({
         data: {
             id: randomUUID(),
             title: "Placeholder Song",
@@ -30,10 +33,21 @@ export async function getServerSideProps(
         },
     })!
 
+    // get songs by artist
+    // const songs = await prismaInstance.song.findMany({
+    //     where: {
+    //         primaryArtistIds: {
+    //             has: context.params!.id,
+    //         },
+    //     },
+    // })
+
+    const completeSong = await getCompleteSong(placeholderSong)
+
     return {
         props: {
             artist: placeholderArtist,
-            songs: [placeholderSong],
+            songs: [completeSong],
         },
     }
 }
@@ -53,9 +67,7 @@ export default function ArtistProfile({ artist, songs }: ArtistProfileProps) {
             <main>
                 <h1>MusicPipe</h1>
 
-                <p>
-                    {artist.name} {artist.id} {JSON.stringify(artist.aliases)}
-                </p>
+                <ArtistCard artist={artist} />
 
                 <Tracklist tracks={songs} />
             </main>

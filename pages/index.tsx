@@ -1,6 +1,11 @@
 import Head from "next/head"
+import { GetServerSidePropsContext } from "next"
+import { authOptions } from "./api/auth/[...nextauth]"
+import { getToken } from "next-auth/jwt"
 
-export default function Home() {
+export default function Home(props: any) {
+    console.log(props)
+
     return (
         <>
             <Head>
@@ -17,4 +22,19 @@ export default function Home() {
             </main>
         </>
     )
+}
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+    const token = await getToken({
+        req: context.req,
+        secret: authOptions.secret,
+    })
+
+    console.log(token)
+
+    return {
+        props: {
+            session: token,
+        },
+    }
 }

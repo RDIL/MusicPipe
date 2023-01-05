@@ -1,29 +1,25 @@
 import React, { useMemo } from "react"
 import Link from "next/link"
 import { FormattedArtistList } from "./FormattedArtistList"
-import { Artist, Song } from "./api-generated"
+import { CompleteSong } from "../apiExtended"
 
 export interface FormattedSongNameProps {
-    song: Song
-    featuredArtists: Artist[]
+    song: CompleteSong
 }
 
-export function FormattedSongName({
-    song,
-    featuredArtists,
-}: FormattedSongNameProps) {
+export function FormattedSongName({ song }: FormattedSongNameProps) {
     const featuredDetails = useMemo(() => {
-        if (featuredArtists.length < 1) {
+        if (song.featuredArtists.length < 1) {
             return <span></span>
         }
 
         return (
             <span>
                 {" "}
-                (feat. <FormattedArtistList artists={featuredArtists} />)
+                (feat. <FormattedArtistList artists={song.featuredArtists} />)
             </span>
         )
-    }, [featuredArtists])
+    }, [song.featuredArtists])
 
     return (
         <span>

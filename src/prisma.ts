@@ -1,13 +1,11 @@
 import { PrismaClient } from "./api-generated"
 
-declare global {
-    var prisma: PrismaClient | undefined
-}
-
-const client = globalThis.prisma || new PrismaClient()
+// @ts-expect-error Untyped global so it's not in code completion
+const prismaInstance = globalThis.prisma || new PrismaClient()
 
 if (process.env.NODE_ENV !== "production") {
-    globalThis.prisma = client
+    // @ts-expect-error Untyped global so it's not in code completion
+    globalThis.prisma = prismaInstance
 }
 
-export default client
+export default prismaInstance

@@ -9,14 +9,14 @@ import {
 } from "@mui/material"
 import React from "react"
 import { FormattedSongName } from "./FormattedSongName"
-import { Artist, Song } from "./api-generated"
+import { CompleteSong } from "../apiExtended"
+import { FormattedArtistList } from "./FormattedArtistList"
 
 export interface TracklistProps {
-    tracks: Song[]
-    trackFeats: Artist[][]
+    tracks: CompleteSong[]
 }
 
-export function Tracklist({ tracks, trackFeats }: TracklistProps) {
+export function Tracklist({ tracks }: TracklistProps) {
     return (
         <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -29,7 +29,7 @@ export function Tracklist({ tracks, trackFeats }: TracklistProps) {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {tracks.map((track, index) => (
+                    {tracks.map((track) => (
                         <TableRow
                             key={track.title}
                             sx={{
@@ -39,12 +39,13 @@ export function Tracklist({ tracks, trackFeats }: TracklistProps) {
                             }}
                         >
                             <TableCell component="th" scope="row">
-                                <FormattedSongName
-                                    song={track}
-                                    featuredArtists={trackFeats[index]}
+                                <FormattedSongName song={track} />
+                            </TableCell>
+                            <TableCell align="right">
+                                <FormattedArtistList
+                                    artists={track.primaryArtists}
                                 />
                             </TableCell>
-                            <TableCell align="right">{track.title}</TableCell>
                             <TableCell align="right">{track.title}</TableCell>
                             <TableCell align="right">{track.title}</TableCell>
                         </TableRow>
