@@ -3,6 +3,8 @@ import { GetServerSidePropsContext } from "next"
 import prismaInstance from "../../src/prisma"
 import { User, UserRole } from "../../src/api-generated"
 import {
+    Button,
+    CircularProgress,
     Divider,
     ListItemIcon,
     ListItemText,
@@ -21,6 +23,8 @@ import MoveDown from "@mui/icons-material/MoveDown"
 import MoveUp from "@mui/icons-material/MoveUp"
 import { InlineButton } from "../../src/components/InlineButton"
 import { PermissionsInt } from "../../src/utils"
+import Head from "next/head"
+import dynamic from "next/dynamic"
 
 interface UserManagementProps {
     users: User[]
@@ -92,11 +96,20 @@ function UserAdminActions({ user }: { user: User }) {
     )
 }
 
+const LazyCreateUserDialog = dynamic(
+    () => import("../../src/components/CreateUserDialog"),
+    {
+        loading: () => <CircularProgress disableShrink />,
+        ssr: true,
+    }
+)
+
 export default function UserManagement({ users }: UserManagementProps) {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
     const [currentOpenUser, setCurrentOpenUser] = React.useState<string | null>(
         null
     )
+    const [creatingNew, setCreatingNew] = React.useState(false)
 
     const handleClick =
         (userId: string) => (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -111,7 +124,26 @@ export default function UserManagement({ users }: UserManagementProps) {
 
     return (
         <div>
+            <Head>
+                <title>User Management</title>
+            </Head>
+
             <h1>User Management</h1>
+
+            {creatingNew ? (
+                <LazyCreateUserDialog
+                    callback={() => {
+                        setCreatingNew(false)
+                    }}
+                    cancel={() => {
+                        setCreatingNew(false)
+                    }}
+                />
+            ) : null}
+
+            <Button variant="outlined" onClick={() => setCreatingNew(true)}>
+                Add New User
+            </Button>
 
             <Table>
                 <TableHead>

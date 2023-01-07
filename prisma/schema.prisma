@@ -33,6 +33,8 @@ model Album {
     primaryArtistIds String[]
     /// A list of the album's songs' CUIDs. Order matters!
     tracklistIds     String[]
+
+    type AlbumType @default(ALBUM)
 }
 
 /// An artist, band, or other musical entity. Can appear as a primary, featured, writer, or producer on a musical work.
@@ -72,4 +74,18 @@ enum UserRole {
     VIEWER
     /// Artists can view and edit their own content, but cannot view or edit anything else.
     ARTIST
+}
+
+/// A type of album.
+enum AlbumType {
+    /// A basic set of songs.
+    ALBUM
+    /// A single song, may include one or more remixes.
+    SINGLE
+    /// An extended play - a collection of songs, usually less than a full album.
+    EP
+    /// A compilation of songs from multiple artists.
+    COMPILATION
+    /// A compilation of music, typically from multiple sources, that is combined into a single track or continuous mix of tracks.
+    MIXTAPE
 }
