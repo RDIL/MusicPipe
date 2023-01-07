@@ -8,36 +8,68 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
+/// A user of the application.
 model User {
-    id            String  @id @default(cuid())
-    username      String  @unique
-    password      String  @default("")
-
-    // fields that don't actually do anything but fix some undefined errors with next-auth
-    name          String  @default("")
-    email         String  @default("")
-    image         String  @default("")
+    /// The CUID of the user.
+    id       String   @id @default(cuid())
+    /// The username of the user - can be an email address.
+    username String   @unique
+    /// The user's hashed password.
+    password String   @default("")
+    /// The user's chosen display name.
+    name     String   @default("")
+    /// The user's role in the application.
+    role     UserRole @default(ARTIST)
 }
 
+/// An album.
 model Album {
-    id               String   @id @default(cuid())
-    title            String
+    /// The CUID of the album.
+    id    String @id @default(cuid())
+    /// The title of the album.
+    title String
+
+    /// A list of the album's primary artists' CUIDs.
     primaryArtistIds String[]
+    /// A list of the album's songs' CUIDs. Order matters!
     tracklistIds     String[]
 }
 
+/// An artist, band, or other musical entity. Can appear as a primary, featured, writer, or producer on a musical work.
 model Artist {
+    /// The CUID of the artist.
     id      String   @id @default(cuid())
-    name    String
+    /// The artist's name.
+    name    String   @unique
+    /// Any aliases the artist may have.
     aliases String[] @default([])
 }
 
+/// A single song.
 model Song {
+    /// The CUID of the song.
     id    String @id @default(cuid())
+    /// The title of the song.
     title String
 
+    /// The CUIDs of the song's primary artists.
     primaryArtistIds  String[]
+    /// The CUIDs of the song's writers.
     writerIds         String[]
+    /// The CUIDs of the song's producers.
     producerIds       String[]
+    /// The CUIDs of the song's featured artists.
     featuredArtistIds String[]
+}
+
+/// A user's role controls what they can do in the application.
+enum UserRole {
+    /// Administrators can do everything managers can do, but with added controls over other users.
+    ADMIN
+    /// Managers can view and edit anything on the site, but cannot create or delete users.
+    MANAGER
+    /// Viewers can view all content on the site, but cannot edit anything.
+    VIEWER
+    /// Artists can view and edit their own content, but cannot view or edit anything else.
+    ARTIST
 }

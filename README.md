@@ -4,15 +4,15 @@ MusicPipe (working title, subject to change) is my attempt at building a webapp 
 
 ## Goals
 
-- Help musical artists get their songs to publishers
-- Help publishers/labels keep metadata all together
-- Have a usable UI
-- Version control of songs/metadata
-- Be able to export to various formats
+-   Help musical artists get their songs to publishers
+-   Help publishers/labels keep metadata all together
+-   Have a usable UI
+-   Version control of songs/metadata
+-   Be able to export to various formats
 
 ## Non-Goals
 
-- Become a paid product, as that would be a lot of work
+-   Become a paid product, as that would be a lot of work
 
 ## Contributing
 

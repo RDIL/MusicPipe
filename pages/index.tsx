@@ -30,8 +30,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         secret: authOptions.secret,
     })
 
-    console.log(token)
-
     return {
         props: {
             session: token,

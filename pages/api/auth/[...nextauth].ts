@@ -24,8 +24,6 @@ const authorize = async (
             username: true,
             password: true,
             name: true,
-            email: true,
-            image: true,
         },
     })
 
@@ -43,8 +41,8 @@ const authorize = async (
             id: dbAccount.id,
             username: dbAccount.username,
             name: dbAccount.name,
-            email: dbAccount.email,
-            image: dbAccount.image,
+            email: null,
+            image: null,
         }
 
         console.log("User authenticated", dbAccount)
@@ -58,7 +56,7 @@ const authorize = async (
 export const authOptions: AuthOptions = {
     // TODO: these are for TESTING ONLY!
     debug: true,
-    secret: "uYtViNbbSJflFNsbaHFa",
+    secret: process.env.JWT_SECRET || "uYtViNbbSJflFNsbaHFa",
     providers: [
         CredentialsProvider({
             name: "MusicPipe",
@@ -76,6 +74,16 @@ export const authOptions: AuthOptions = {
             authorize,
         }),
     ],
+    callbacks: {
+        async jwt({ token, account }) {
+            if (account) {
+                delete token.email
+                delete token.picture
+            }
+
+            return token
+        },
+    },
     session: {
         strategy: "jwt",
         maxAge: THIRTY_DAYS_IN_SECONDS,
