@@ -1,16 +1,33 @@
 import { NextApiRequest, NextApiResponse } from "next"
 
-export class BasicApiHandler<ApiType> {
-    dispatch(req: NextApiRequest, res: NextApiResponse<ApiType | string>) {
+export abstract class BasicApiHandler<ApiType> {
+    createValidator(
+        req: NextApiRequest,
+        res: NextApiResponse<ApiType | string>
+    ) {
+        return (field: keyof ApiType & string) => {
+            if (!req.body[field]) {
+                res.status(400).send(`Field ${field} is required`)
+                return false
+            }
+
+            return true
+        }
+    }
+
+    async dispatch(
+        req: NextApiRequest,
+        res: NextApiResponse<ApiType | string>
+    ) {
         switch (req.method) {
             case "POST":
-                this.post(req, res)
+                await this.create(req, res)
                 break
             case "PUT":
-                this.put(req, res)
+                await this.put(req, res)
                 break
             case "DELETE":
-                this.delete(req, res)
+                await this.delete(req, res)
                 break
             default:
                 res.status(400).send(
@@ -20,9 +37,10 @@ export class BasicApiHandler<ApiType> {
         }
     }
 
-    async post(req: NextApiRequest, res: NextApiResponse<ApiType | string>) {
-        res.status(500).send("Not implemented")
-    }
+    abstract create(
+        req: NextApiRequest,
+        res: NextApiResponse<ApiType | string>
+    ): Promise<void>
 
     async put(req: NextApiRequest, res: NextApiResponse<ApiType | string>) {
         res.status(500).send("Not implemented")
