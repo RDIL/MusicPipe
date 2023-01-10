@@ -25,6 +25,7 @@ import { InlineButton } from "../../src/components/InlineButton"
 import { PermissionsInt } from "../../src/utils"
 import Head from "next/head"
 import dynamic from "next/dynamic"
+import { useRouter } from "next/router"
 
 interface UserManagementProps {
     users: User[]
@@ -111,6 +112,11 @@ export default function UserManagement({ users }: UserManagementProps) {
     )
     const [creatingNew, setCreatingNew] = React.useState(false)
 
+    const router = useRouter()
+
+    // Call this function when you want to refresh the data
+    const refreshData = () => router.replace(router.asPath)
+
     const handleClick =
         (userId: string) => (event: React.MouseEvent<HTMLButtonElement>) => {
             setAnchorEl(event.currentTarget)
@@ -120,6 +126,7 @@ export default function UserManagement({ users }: UserManagementProps) {
     const handleClose = () => {
         setAnchorEl(null)
         setCurrentOpenUser(null)
+        // refreshData()
     }
 
     return (
@@ -134,6 +141,20 @@ export default function UserManagement({ users }: UserManagementProps) {
                 <LazyCreateUserDialog
                     callback={() => {
                         setCreatingNew(false)
+                        fetch("/api/user", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                                name: "Test 2",
+                                username: "test2",
+                                role: "ARTIST",
+                            })
+                        })
+                            .then((res) => res.text())
+                            .then((text) => console.log(text))
+                            .catch((err) => console.error(err))
                     }}
                     cancel={() => {
                         setCreatingNew(false)
@@ -201,6 +222,8 @@ export default function UserManagement({ users }: UserManagementProps) {
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
+    // TODO: add auth guard
+
     const users = await prismaInstance.user.findMany({
         select: {
             id: true,

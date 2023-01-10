@@ -6,6 +6,11 @@ export abstract class BasicApiHandler<ApiType> {
         res: NextApiResponse<ApiType | string>
     ) {
         return (field: keyof ApiType & string) => {
+            if (typeof req.body !== "object") {
+                res.status(400).send("Invalid request body")
+                return false
+            }
+
             if (!req.body[field]) {
                 res.status(400).send(`Field ${field} is required`)
                 return false

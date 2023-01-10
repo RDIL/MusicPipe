@@ -30,6 +30,7 @@ export default function MyApp(props: AppProps & AdditionalProps) {
                     name="viewport"
                     content="initial-scale=1, width=device-width"
                 />
+                <meta name="robots" content="noindex,nofollow" />
             </Head>
             <ThemeProvider theme={theme}>
                 <CssBaseline />

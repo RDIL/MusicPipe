@@ -28,6 +28,8 @@ class ArtistApiHandler extends BasicApiHandler<Artist> {
                 name: artist.name,
             },
         })
+
+        res.status(201).send("done")
     }
 }
 

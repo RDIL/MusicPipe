@@ -1,12 +1,11 @@
 import Head from "next/head"
 import { GetServerSidePropsContext, GetServerSidePropsResult } from "next"
 import React from "react"
-import { randomUUID } from "crypto"
 import { Tracklist } from "../../src/components/Tracklist"
-import { Artist, Song } from "../../src/api-generated"
-import prismaInstance from "../../src/prisma"
+import { Artist } from "../../src/api-generated"
 import { CompleteSong, getCompleteSong } from "../../src/apiExtended"
 import { ArtistCard } from "../../src/components/ArtistCard"
+import { getArtistById, getSongsByArtistId } from "../../src/artistService"
 
 interface ArtistProfileProps {
     artist: Artist
@@ -16,38 +15,30 @@ interface ArtistProfileProps {
 export async function getServerSideProps(
     context: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<ArtistProfileProps>> {
-    console.log(context.params)
+    const artist = context.params?.id as string | undefined
 
-    const placeholderArtist = await prismaInstance.artist.create({
-        data: {
-            id: randomUUID(),
-            name: "Placeholder Artist",
-        },
-    })!
+    if (!artist) {
+        return {
+            notFound: true,
+        }
+    }
 
-    const placeholderSong: Song = await prismaInstance.song.create({
-        data: {
-            id: randomUUID(),
-            title: "Placeholder Song",
-            primaryArtistIds: [placeholderArtist.id],
-        },
-    })!
+    const artistObj = await getArtistById(artist)
 
-    // get songs by artist
-    // const songs = await prismaInstance.song.findMany({
-    //     where: {
-    //         primaryArtistIds: {
-    //             has: context.params!.id,
-    //         },
-    //     },
-    // })
+    if (!artistObj) {
+        return {
+            notFound: true,
+        }
+    }
 
-    const completeSong = await getCompleteSong(placeholderSong)
+    const songs = await getSongsByArtistId(artist)
 
     return {
         props: {
-            artist: placeholderArtist,
-            songs: [completeSong],
+            artist: artistObj,
+            songs: await Promise.all(
+                songs.map((song) => getCompleteSong(song))
+            ),
         },
     }
 }
@@ -57,11 +48,6 @@ export default function ArtistProfile({ artist, songs }: ArtistProfileProps) {
         <>
             <Head>
                 <title>Artist Profile: Test</title>
-                <meta name="description" content="MusicPipe" />
-                <meta
-                    name="viewport"
-                    content="width=device-width, initial-scale=1"
-                />
             </Head>
 
             <main>

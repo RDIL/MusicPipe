@@ -1,6 +1,5 @@
 {
     "compilerOptions": {
-        "experimentalDecorators": true,
         "target": "es5",
         "lib": ["dom", "dom.iterable", "esnext"],
         "allowJs": true,
@@ -9,6 +8,8 @@
         "forceConsistentCasingInFileNames": true,
         "noEmit": true,
         "esModuleInterop": true,
+        "strictNullChecks": true,
+        "strictFunctionTypes": true,
         "module": "esnext",
         "moduleResolution": "node",
         "resolveJsonModule": true,
@@ -17,5 +18,11 @@
         "incremental": true
     },
     "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-    "exclude": ["node_modules"]
+    "exclude": [
+        "node_modules",
+        ".pnp.cjs",
+        ".pnp.loader.mjs",
+        "src/api-generated/runtime",
+        "src/api-generated/*.js"
+    ]
 }
