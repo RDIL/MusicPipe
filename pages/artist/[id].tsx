@@ -12,6 +12,24 @@ interface ArtistProfileProps {
     songs: CompleteSong[]
 }
 
+export default function ArtistProfile({ artist, songs }: ArtistProfileProps) {
+    return (
+        <>
+            <Head>
+                <title>{artist.name}</title>
+            </Head>
+
+            <main>
+                <h1>MusicPipe</h1>
+
+                <ArtistCard artist={artist} />
+
+                <Tracklist tracks={songs} />
+            </main>
+        </>
+    )
+}
+
 export async function getServerSideProps(
     context: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<ArtistProfileProps>> {
@@ -41,22 +59,4 @@ export async function getServerSideProps(
             ),
         },
     }
-}
-
-export default function ArtistProfile({ artist, songs }: ArtistProfileProps) {
-    return (
-        <>
-            <Head>
-                <title>Artist Profile: Test</title>
-            </Head>
-
-            <main>
-                <h1>MusicPipe</h1>
-
-                <ArtistCard artist={artist} />
-
-                <Tracklist tracks={songs} />
-            </main>
-        </>
-    )
 }

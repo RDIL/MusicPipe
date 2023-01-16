@@ -1,10 +1,15 @@
 import Head from "next/head"
 import { GetServerSidePropsContext } from "next"
 import { authOptions } from "./api/auth/[...nextauth]"
-import { getToken } from "next-auth/jwt"
+import { getToken, JWT } from "next-auth/jwt"
+import Link from "next/link"
 
-export default function Home(props: any) {
-    console.log(props)
+interface HomeProps {
+    session: JWT | null
+}
+
+export default function Home(props: HomeProps) {
+    const isAdmin = props.session?.role === "ADMIN"
 
     return (
         <>
@@ -19,6 +24,17 @@ export default function Home(props: any) {
 
             <main>
                 <h1>MusicPipe</h1>
+
+                {props.session ? (
+                    <ul>
+                        {(isAdmin && (
+                            <li>
+                                <Link href="/settings/users">Manage Users</Link>
+                            </li>
+                        )) ||
+                            null}
+                    </ul>
+                ) : null}
             </main>
         </>
     )

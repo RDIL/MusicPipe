@@ -28,3 +28,9 @@ export function FormattedSongName({ song }: FormattedSongNameProps) {
         </span>
     )
 }
+
+export function formatSongTitleString({ song }: FormattedSongNameProps) {
+    return `${song.title} – ${song.primaryArtists
+        .map((s) => s.name)
+        .join(", ")}`
+}

@@ -25,7 +25,9 @@ import { InlineButton } from "../../src/components/InlineButton"
 import { PermissionsInt } from "../../src/utils"
 import Head from "next/head"
 import dynamic from "next/dynamic"
-import { useRouter } from "next/router"
+import { LoadingState, usePageApi } from "../../src/components/hooks/usePageApi"
+import { getToken } from "next-auth/jwt"
+import { authOptions } from "../api/auth/[...nextauth]"
 
 interface UserManagementProps {
     users: User[]
@@ -53,6 +55,15 @@ function detailsForPermission(
 
     return [<MoveUp key={permission} />, "Promote to "]
 }
+
+// noinspection JSUnusedGlobalSymbols
+const LazyCreateUserDialog = dynamic(
+    () => import("../../src/components/CreateUserDialog"),
+    {
+        loading: () => <CircularProgress disableShrink />,
+        ssr: true,
+    }
+)
 
 function UserAdminActions({ user }: { user: User }) {
     const roles: [string, keyof typeof UserRole][] = [
@@ -97,25 +108,13 @@ function UserAdminActions({ user }: { user: User }) {
     )
 }
 
-const LazyCreateUserDialog = dynamic(
-    () => import("../../src/components/CreateUserDialog"),
-    {
-        loading: () => <CircularProgress disableShrink />,
-        ssr: true,
-    }
-)
-
 export default function UserManagement({ users }: UserManagementProps) {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
     const [currentOpenUser, setCurrentOpenUser] = React.useState<string | null>(
         null
     )
     const [creatingNew, setCreatingNew] = React.useState(false)
-
-    const router = useRouter()
-
-    // Call this function when you want to refresh the data
-    const refreshData = () => router.replace(router.asPath)
+    const usersApi = usePageApi("/api/users")
 
     const handleClick =
         (userId: string) => (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -126,7 +125,20 @@ export default function UserManagement({ users }: UserManagementProps) {
     const handleClose = () => {
         setAnchorEl(null)
         setCurrentOpenUser(null)
-        // refreshData()
+    }
+
+    const createUserCallback = (user: Partial<User>) => {
+        setCreatingNew(false)
+        usersApi.mutate(
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(user),
+            },
+            true
+        )
     }
 
     return (
@@ -139,32 +151,19 @@ export default function UserManagement({ users }: UserManagementProps) {
 
             {creatingNew ? (
                 <LazyCreateUserDialog
-                    callback={() => {
-                        setCreatingNew(false)
-                        fetch("/api/user", {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify({
-                                name: "Test 2",
-                                username: "test2",
-                                role: "ARTIST",
-                            })
-                        })
-                            .then((res) => res.text())
-                            .then((text) => console.log(text))
-                            .catch((err) => console.error(err))
-                    }}
-                    cancel={() => {
-                        setCreatingNew(false)
-                    }}
+                    callback={createUserCallback}
+                    cancel={() => setCreatingNew(false)}
                 />
             ) : null}
 
             <Button variant="outlined" onClick={() => setCreatingNew(true)}>
                 Add New User
             </Button>
+
+            {usersApi.status === LoadingState.Loading ? (
+                <CircularProgress disableShrink />
+            ) : null}
+            {usersApi.alertBox}
 
             <Table>
                 <TableHead>
@@ -222,7 +221,19 @@ export default function UserManagement({ users }: UserManagementProps) {
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-    // TODO: add auth guard
+    const session = await getToken({
+        req: context.req,
+        secret: authOptions.secret,
+    })
+
+    if (session?.role !== UserRole.ADMIN) {
+        return {
+            redirect: {
+                destination: "/api/auth/signin?callback=" + context.resolvedUrl,
+                permanent: false,
+            },
+        }
+    }
 
     const users = await prismaInstance.user.findMany({
         select: {

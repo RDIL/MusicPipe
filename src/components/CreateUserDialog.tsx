@@ -8,10 +8,10 @@ import {
     RadioGroup,
     TextField,
 } from "@mui/material"
-import { UserRole } from "../api-generated"
+import { User, UserRole } from "../api-generated"
 
 export default function CreateUserDialog(props: {
-    callback: () => void
+    callback: (user: Partial<User>) => void
     cancel: () => void
 }) {
     const [username, setUsername] = React.useState("")
@@ -21,7 +21,13 @@ export default function CreateUserDialog(props: {
     return (
         <CreateDialog
             type="User"
-            onCreate={() => props.callback()}
+            onCreate={() =>
+                props.callback({
+                    username,
+                    name,
+                    role,
+                })
+            }
             open={true}
             onClose={() => props.cancel()}
         >

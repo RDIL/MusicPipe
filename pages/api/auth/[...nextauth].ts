@@ -24,6 +24,7 @@ const authorize = async (
             username: true,
             password: true,
             name: true,
+            role: true,
         },
     })
 
@@ -32,20 +33,15 @@ const authorize = async (
         return null
     }
 
-    if (
-        // dbAccount.password &&
-        await comparePassword(credentials.password, dbAccount.password)
-    ) {
-        // clone of dbAccount, but with password removed
+    if (await comparePassword(credentials.password, dbAccount.password)) {
         const account = {
             id: dbAccount.id,
             username: dbAccount.username,
             name: dbAccount.name,
-            email: null,
-            image: null,
+            role: dbAccount.role,
         }
 
-        console.log("User authenticated", dbAccount)
+        console.log("User authenticated", account)
         return account
     }
 
@@ -75,10 +71,15 @@ export const authOptions: AuthOptions = {
         }),
     ],
     callbacks: {
-        async jwt({ token, account }) {
-            if (account) {
+        async jwt({ token, user }) {
+            if (token.email || token.picture) {
                 delete token.email
                 delete token.picture
+            }
+
+            if (user) {
+                // @ts-expect-error
+                token.role = user.role
             }
 
             return token
