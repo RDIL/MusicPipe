@@ -19,6 +19,11 @@ const nextConfig = {
                 destination: "/song/:path",
                 permanent: true,
             },
+            {
+                source: "/login",
+                destination: "/api/auth/signin",
+                permanent: true,
+            },
         ]
     },
 }

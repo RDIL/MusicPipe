@@ -11,9 +11,14 @@ import { FormattedArtistList } from "../../src/components/FormattedArtistList"
 import { Button, styled } from "@mui/material"
 import Edit from "@mui/icons-material/Edit"
 import { SpacedEditableArtistList } from "../../src/components/EditableArtistList"
+import { Artist } from "../../src/api-generated"
 
 interface CommonProps {
     song: CompleteSong
+}
+
+export interface ArtistProvider {
+    allArtists: Artist[]
 }
 
 function ReadView(props: CommonProps & EditableProvider) {
@@ -58,18 +63,30 @@ type EditableProvider = {
     setEditing: (editing: boolean) => void
 }
 
-function WriteView(props: CommonProps & EditableProvider) {
+function WriteView(props: CommonProps & EditableProvider & ArtistProvider) {
     return (
         <FlexColumnSection>
-            <SpacedEditableArtistList title="Primary Artists" />
-            <SpacedEditableArtistList title="Featured Artists" />
-            <SpacedEditableArtistList title="Writers" />
-            <SpacedEditableArtistList title="Producers" />
+            <SpacedEditableArtistList
+                allArtists={props.allArtists}
+                title="Primary Artists"
+            />
+            <SpacedEditableArtistList
+                allArtists={props.allArtists}
+                title="Featured Artists"
+            />
+            <SpacedEditableArtistList
+                allArtists={props.allArtists}
+                title="Writers"
+            />
+            <SpacedEditableArtistList
+                allArtists={props.allArtists}
+                title="Producers"
+            />
         </FlexColumnSection>
     )
 }
 
-export default function SongById(props: CommonProps) {
+export default function SongById(props: CommonProps & ArtistProvider) {
     const [isEditing, setIsEditing] = React.useState(false)
 
     return (
@@ -91,7 +108,11 @@ export default function SongById(props: CommonProps) {
                 </h1>
 
                 {isEditing ? (
-                    <WriteView song={props.song} setEditing={setIsEditing} />
+                    <WriteView
+                        allArtists={props.allArtists}
+                        song={props.song}
+                        setEditing={setIsEditing}
+                    />
                 ) : (
                     <ReadView song={props.song} setEditing={setIsEditing} />
                 )}
@@ -102,7 +123,7 @@ export default function SongById(props: CommonProps) {
 
 export async function getServerSideProps(
     context: GetServerSidePropsContext
-): Promise<GetServerSidePropsResult<CommonProps>> {
+): Promise<GetServerSidePropsResult<CommonProps & ArtistProvider>> {
     const params = context.params
 
     if (!params?.id) {
@@ -125,6 +146,7 @@ export async function getServerSideProps(
 
     return {
         props: {
+            allArtists: await prismaInstance.artist.findMany(),
             song: await getCompleteSong(song),
         },
     }

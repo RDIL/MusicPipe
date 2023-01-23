@@ -1,5 +1,4 @@
-import * as React from "react"
-import { GetServerSidePropsContext } from "next"
+import React from "react"
 import prismaInstance from "../../src/prisma"
 import { User, UserRole } from "../../src/api-generated"
 import {
@@ -26,8 +25,7 @@ import { PermissionsInt } from "../../src/utils"
 import Head from "next/head"
 import dynamic from "next/dynamic"
 import { LoadingState, usePageApi } from "../../src/components/hooks/usePageApi"
-import { getToken } from "next-auth/jwt"
-import { authOptions } from "../api/auth/[...nextauth]"
+import { withPageAuthentication } from "../../src/withAuthentication"
 
 interface UserManagementProps {
     users: User[]
@@ -114,7 +112,7 @@ export default function UserManagement({ users }: UserManagementProps) {
         null
     )
     const [creatingNew, setCreatingNew] = React.useState(false)
-    const usersApi = usePageApi("/api/users")
+    const usersApi = usePageApi("/api/user")
 
     const handleClick =
         (userId: string) => (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -220,33 +218,22 @@ export default function UserManagement({ users }: UserManagementProps) {
     )
 }
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-    const session = await getToken({
-        req: context.req,
-        secret: authOptions.secret,
-    })
+export const getServerSideProps = withPageAuthentication(
+    { minimumRole: UserRole.ADMIN },
+    async () => {
+        const users = await prismaInstance.user.findMany({
+            select: {
+                id: true,
+                name: true,
+                username: true,
+                role: true,
+            },
+        })
 
-    if (session?.role !== UserRole.ADMIN) {
         return {
-            redirect: {
-                destination: "/api/auth/signin?callback=" + context.resolvedUrl,
-                permanent: false,
+            props: {
+                users,
             },
         }
     }
-
-    const users = await prismaInstance.user.findMany({
-        select: {
-            id: true,
-            name: true,
-            username: true,
-            role: true,
-        },
-    })
-
-    return {
-        props: {
-            users,
-        },
-    }
-}
+)

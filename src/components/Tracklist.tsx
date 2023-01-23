@@ -1,5 +1,4 @@
 import {
-    Paper,
     Table,
     TableBody,
     TableCell,
@@ -11,6 +10,7 @@ import React from "react"
 import { FormattedSongName } from "./FormattedSongName"
 import { CompleteSong } from "../apiExtended"
 import { FormattedArtistList } from "./FormattedArtistList"
+import { MarginTopPaper } from "./MarginTopPaper"
 
 export interface TracklistProps {
     tracks: CompleteSong[]
@@ -18,8 +18,8 @@ export interface TracklistProps {
 
 export function Tracklist({ tracks }: TracklistProps) {
     return (
-        <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <TableContainer component={MarginTopPaper}>
+            <Table sx={{ minWidth: 650 }} aria-label="track list">
                 <TableHead>
                     <TableRow>
                         <TableCell>Tracks</TableCell>

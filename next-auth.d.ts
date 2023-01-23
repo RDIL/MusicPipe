@@ -4,7 +4,7 @@ declare module "next-auth/jwt" {
     import type { GetServerSidePropsContext, NextApiRequest } from "next"
     import type { NextRequest } from "next/server"
     import type { LoggerInstance, Awaitable } from "next-auth"
-    import type { UserRole } from "./src/api-generated"
+    import { UserRoleString } from "./src/utils"
 
     export interface DefaultJWT extends Record<string, unknown> {
         name?: string | null
@@ -17,7 +17,7 @@ declare module "next-auth/jwt" {
      * [`jwt` callback](https://next-auth.js.org/configuration/callbacks#jwt-callback) | [`getToken`](https://next-auth.js.org/tutorials/securing-pages-and-api-routes#using-gettoken)
      */
     export interface JWT extends Record<string, unknown>, DefaultJWT {
-        role: UserRole
+        role: UserRoleString
         username: string
     }
 

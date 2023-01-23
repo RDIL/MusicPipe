@@ -1,0 +1,3 @@
+main:not(.no-margin) {
+    margin: 16px;
+}

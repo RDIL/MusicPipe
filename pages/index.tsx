@@ -1,38 +1,47 @@
 import Head from "next/head"
-import { GetServerSidePropsContext } from "next"
-import { authOptions } from "./api/auth/[...nextauth]"
-import { getToken, JWT } from "next-auth/jwt"
 import Link from "next/link"
+import {
+    AuthenticationProps,
+    withPageAuthentication,
+} from "../src/withAuthentication"
+// import { ReorderableList } from "../src/components/ReorderableList"
+// import { Paper } from "@mui/material"
 
-interface HomeProps {
-    session: JWT | null
+function roleSpecificComponent(role: boolean, component: JSX.Element) {
+    return (role && component) || null
 }
 
-export default function Home(props: HomeProps) {
+export default function Home(props: AuthenticationProps) {
     const isAdmin = props.session?.role === "ADMIN"
+    const isManager = isAdmin || props.session?.role === "MANAGER"
 
     return (
         <>
             <Head>
                 <title>MusicPipe</title>
-                <meta name="description" content="MusicPipe" />
-                <meta
-                    name="viewport"
-                    content="width=device-width, initial-scale=1"
-                />
             </Head>
 
             <main>
                 <h1>MusicPipe</h1>
 
+                {/*<Paper>*/}
+                {/*    <ReorderableList />*/}
+                {/*</Paper>*/}
+
                 {props.session ? (
                     <ul>
-                        {(isAdmin && (
+                        {roleSpecificComponent(
+                            isAdmin,
                             <li>
                                 <Link href="/settings/users">Manage Users</Link>
                             </li>
-                        )) ||
-                            null}
+                        )}
+                        {roleSpecificComponent(
+                            isManager,
+                            <li>
+                                <Link href="/artist/list">All Artists</Link>
+                            </li>
+                        )}
                     </ul>
                 ) : null}
             </main>
@@ -40,15 +49,6 @@ export default function Home(props: HomeProps) {
     )
 }
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-    const token = await getToken({
-        req: context.req,
-        secret: authOptions.secret,
-    })
-
-    return {
-        props: {
-            session: token,
-        },
-    }
-}
+export const getServerSideProps = withPageAuthentication({}, async () => ({
+    props: {},
+}))

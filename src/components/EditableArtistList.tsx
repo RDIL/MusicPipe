@@ -1,5 +1,6 @@
 import React from "react"
 import { Autocomplete, Paper, styled, TextField } from "@mui/material"
+import { ArtistProvider } from "../../pages/song/[id]"
 
 interface ChipData {
     key: string
@@ -37,6 +38,7 @@ function ArtistAutoComplete({
             freeSolo
             disableCloseOnSelect
             options={artists}
+            disableListWrap
             getOptionLabel={(option: string | ChipData) =>
                 typeof option === "string"
                     ? option
@@ -71,15 +73,19 @@ export interface EditableArtistListProps {
     title: string
 }
 
-export function EditableArtistList(props: EditableArtistListProps) {
-    const [chipData] = React.useState<readonly ChipData[]>([
-        // TODO get artists from database
-    ])
-
+export function EditableArtistList(
+    props: EditableArtistListProps & ArtistProvider
+) {
     return (
         <HalfStanding {...props}>
             <Paper>
-                <ArtistAutoComplete artists={chipData} title={props.title} />
+                <ArtistAutoComplete
+                    artists={props.allArtists.map((a) => ({
+                        key: a.id,
+                        label: a.name,
+                    }))}
+                    title={props.title}
+                />
             </Paper>
         </HalfStanding>
     )

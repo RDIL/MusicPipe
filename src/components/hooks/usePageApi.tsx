@@ -23,10 +23,15 @@ export function usePageApi(url: string): UsePageApiData {
         (options: RequestInit, reloadOnMutate: boolean) => {
             setStatus(LoadingState.Loading)
             fetch(url, options)
-                .then(() => {
+                .then((resp) => {
+                    if (resp.status >= 400) {
+                        setStatus(LoadingState.Error)
+                        return
+                    }
+
                     setStatus(LoadingState.Success)
                     if (reloadOnMutate) {
-                        router.replace(router.asPath, router.asPath + "?")
+                        router.replace(router.asPath, router.asPath)
                     }
                 })
                 .catch(() => setStatus(LoadingState.Error))
