@@ -17,6 +17,7 @@ import {
 } from "@mui/material"
 import { MarginBottomButton } from "../../src/components/MarginBottomButton"
 import { withPageAuthentication } from "../../src/withAuthentication"
+import { MarginTopPaper } from "../../src/components/MarginTopPaper"
 
 interface ArtistListProps {
     artists: Artist[]
@@ -76,7 +77,13 @@ export default function ArtistList({ artists }: ArtistListProps) {
             ) : null}
             {artistsApi.alertBox}
 
-            <TableContainer component={Paper}>
+            <TableContainer
+                component={
+                    artistsApi.status === LoadingState.Idle
+                        ? Paper
+                        : MarginTopPaper
+                }
+            >
                 <Table sx={{ minWidth: 650 }} aria-label="artist list">
                     <TableHead>
                         <TableRow>

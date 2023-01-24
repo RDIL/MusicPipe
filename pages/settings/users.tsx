@@ -2,7 +2,6 @@ import React from "react"
 import prismaInstance from "../../src/prisma"
 import { User, UserRole } from "../../src/api-generated"
 import {
-    Button,
     CircularProgress,
     Divider,
     ListItemIcon,
@@ -26,6 +25,7 @@ import Head from "next/head"
 import dynamic from "next/dynamic"
 import { LoadingState, usePageApi } from "../../src/components/hooks/usePageApi"
 import { withPageAuthentication } from "../../src/withAuthentication"
+import { MarginBottomButton } from "../../src/components/MarginBottomButton"
 
 interface UserManagementProps {
     users: User[]
@@ -63,8 +63,14 @@ const LazyCreateUserDialog = dynamic(
     }
 )
 
-function UserAdminActions({ user }: { user: User }) {
-    const roles: [string, keyof typeof UserRole][] = [
+function UserAdminActions({
+    user,
+    deleteUser,
+}: {
+    user: User
+    deleteUser: React.DispatchWithoutAction
+}) {
+    const roles: [Lowercase<keyof typeof UserRole>, keyof typeof UserRole][] = [
         ["admin", "ADMIN"],
         ["manager", "MANAGER"],
         ["viewer", "VIEWER"],
@@ -76,7 +82,7 @@ function UserAdminActions({ user }: { user: User }) {
             <MenuItem>
                 <ListItemText inset>Reset Password</ListItemText>
             </MenuItem>
-            <MenuItem>
+            <MenuItem onClick={deleteUser}>
                 <ListItemIcon>
                     <DeleteForever />
                 </ListItemIcon>
@@ -139,8 +145,34 @@ export default function UserManagement({ users }: UserManagementProps) {
         )
     }
 
+    const deleteUserCallback = (userId: string) => {
+        usersApi.mutate(
+            {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ id: userId }),
+            },
+            true
+        )
+    }
+
+    // const updateUserCallback = (user: Partial<User>) => {
+    //     usersApi.mutate(
+    //         {
+    //             method: "PUT",
+    //             headers: {
+    //                 "Content-Type": "application/json",
+    //             },
+    //             body: JSON.stringify(user),
+    //         },
+    //         true
+    //     )
+    // }
+
     return (
-        <div>
+        <main>
             <Head>
                 <title>User Management</title>
             </Head>
@@ -154,9 +186,12 @@ export default function UserManagement({ users }: UserManagementProps) {
                 />
             ) : null}
 
-            <Button variant="outlined" onClick={() => setCreatingNew(true)}>
+            <MarginBottomButton
+                variant="outlined"
+                onClick={() => setCreatingNew(true)}
+            >
                 Add New User
-            </Button>
+            </MarginBottomButton>
 
             {usersApi.status === LoadingState.Loading ? (
                 <CircularProgress disableShrink />
@@ -178,11 +213,11 @@ export default function UserManagement({ users }: UserManagementProps) {
                             <TableCell>{user.name}</TableCell>
                             <TableCell>
                                 <InlineButton
-                                    id={"button-user-admin-actions-" + user.id}
+                                    id={"button-admin-actions-" + user.id}
                                     endIcon={<ArrowDropDown />}
                                     aria-controls={
                                         currentOpenUser === user.id
-                                            ? `user-admin-actions-` + user.id
+                                            ? `admin-actions-` + user.id
                                             : undefined
                                     }
                                     aria-haspopup="true"
@@ -199,22 +234,27 @@ export default function UserManagement({ users }: UserManagementProps) {
                                     style={{
                                         display: "flex",
                                     }}
-                                    id={"user-admin-actions-" + user.id}
+                                    id={"admin-actions-" + user.id}
                                     anchorEl={anchorEl}
                                     open={currentOpenUser === user.id}
                                     onClose={handleClose}
                                     MenuListProps={{
-                                        "aria-labelledby": `user-admin-actions-${user.id}`,
+                                        "aria-labelledby": `admin-actions-${user.id}`,
                                     }}
                                 >
-                                    <UserAdminActions user={user} />
+                                    <UserAdminActions
+                                        deleteUser={() =>
+                                            deleteUserCallback(user.id)
+                                        }
+                                        user={user}
+                                    />
                                 </Menu>
                             </TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
             </Table>
-        </div>
+        </main>
     )
 }
 

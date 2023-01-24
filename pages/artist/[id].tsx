@@ -14,19 +14,17 @@ interface ArtistProfileProps {
 
 export default function ArtistProfile({ artist, songs }: ArtistProfileProps) {
     return (
-        <>
+        <main>
             <Head>
                 <title>{artist.name}</title>
             </Head>
 
-            <main>
-                <h1>MusicPipe</h1>
+            <h1>MusicPipe</h1>
 
-                <ArtistCard artist={artist} />
+            <ArtistCard artist={artist} />
 
-                <Tracklist tracks={songs} />
-            </main>
-        </>
+            <Tracklist tracks={songs} />
+        </main>
     )
 }
 
