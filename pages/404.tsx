@@ -4,19 +4,19 @@ import styles from "../src/styles/error.module.css"
 import clsx from "clsx"
 import Link from "next/link"
 
-export default function Unauthorized() {
+export default function NotFound() {
     return (
         <>
             <Head>
-                <title>Unauthorized</title>
+                <title>Not Found</title>
             </Head>
 
             <main className={clsx(styles.main, "no-margin")}>
-                <h1 className={styles.heading}>Unauthorized</h1>
+                <h1 className={styles.heading}>Not Found</h1>
 
                 <p>
-                    You do not have permission to view this page. Are you on the
-                    correct account?
+                    The page you are looking for does not exist. You may have
+                    mistyped the address or the page may have moved.
                 </p>
 
                 <Link href="/">Go back home</Link>

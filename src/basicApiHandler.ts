@@ -5,7 +5,10 @@ export interface DeleteResponse {
     success: boolean
 }
 
-export abstract class BasicApiHandler<ApiType> {
+export abstract class BasicApiHandler<
+    ApiType extends { id: string },
+    Delegate
+> {
     createValidator(req: NextApiRequest) {
         return (field: keyof ApiType & string) => {
             if (typeof req.body !== "object") {
@@ -16,6 +19,38 @@ export abstract class BasicApiHandler<ApiType> {
                 throw new ValidationError(`Field ${field} is required`)
             }
         }
+    }
+
+    abstract get prismaDelegate(): Delegate
+
+    abstract get typeName(): string
+
+    async delete(
+        req: NextApiRequest,
+        res: NextApiResponse<DeleteResponse>
+    ): Promise<void> {
+        const validate = this.createValidator(req)
+
+        validate("id")
+
+        const id = req.body.id as string
+
+        // @ts-expect-error All the delegates have a findFirst method
+        const thing = await this.prismaDelegate.findFirst({
+            where: { id },
+            select: { id: true },
+        })
+
+        if (!thing) {
+            throw new ValidationError(`${this.typeName} not found`)
+        }
+
+        // @ts-expect-error All the delegates have a findFirst method
+        await this.prismaDelegate.delete({
+            where: { id },
+        })
+
+        res.json({ success: true })
     }
 
     async dispatch(req: NextApiRequest, res: NextApiResponse) {
@@ -54,9 +89,4 @@ export abstract class BasicApiHandler<ApiType> {
     async put(req: NextApiRequest, res: NextApiResponse<ApiType | string>) {
         res.status(500).send("Not implemented")
     }
-
-    abstract delete(
-        req: NextApiRequest,
-        res: NextApiResponse<DeleteResponse>
-    ): Promise<void>
 }

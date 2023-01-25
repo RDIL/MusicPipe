@@ -20,6 +20,11 @@ model User {
     name     String   @default("")
     /// The user's role in the application.
     role     UserRole @default(ARTIST)
+
+    /// The bound Artist's ID, if any.
+    artistId String? @unique
+    /// The bound Artist, if any.
+    artist   Artist? @relation(fields: [artistId], references: [id])
 }
 
 /// An album.
@@ -45,6 +50,9 @@ model Artist {
     name    String   @unique
     /// Any aliases the artist may have.
     aliases String[] @default([])
+
+    /// The artist's user account, can be null.
+    user   User?
 }
 
 /// A single song.

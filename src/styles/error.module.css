@@ -9,12 +9,11 @@
 }
 
 .heading {
-    color: #000;
+    color: #f00;
     margin: 0;
     font-size: 2rem;
     font-weight: 700;
     text-decoration: underline;
-    text-decoration-color: #f00;
     text-decoration-thickness: 0.2rem;
     text-underline-offset: 0.2rem;
 }

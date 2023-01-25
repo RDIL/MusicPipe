@@ -1,34 +1,18 @@
 import type { NextApiRequest, NextApiResponse } from "next"
-import { BasicApiHandler, DeleteResponse } from "../../src/basicApiHandler"
+import { BasicApiHandler } from "../../src/basicApiHandler"
 import { Artist } from "../../src/api-generated"
 import prismaInstance from "../../src/prisma"
-import { ValidationError } from "../../src/errors"
 
-class ArtistApiHandler extends BasicApiHandler<Artist> {
-    override async delete(
-        req: NextApiRequest,
-        res: NextApiResponse<DeleteResponse>
-    ): Promise<void> {
-        const validate = this.createValidator(req)
+class ArtistApiHandler extends BasicApiHandler<
+    Artist,
+    typeof prismaInstance.artist
+> {
+    override get prismaDelegate() {
+        return prismaInstance.artist
+    }
 
-        validate("id")
-
-        const id = req.body.id as number
-
-        const artist = await prismaInstance.artist.findFirst({
-            where: { id },
-            select: { id: true, name: true },
-        })
-
-        if (!artist) {
-            throw new ValidationError("Artist not found")
-        }
-
-        await prismaInstance.artist.delete({
-            where: { id },
-        })
-
-        res.json({ success: true })
+    override get typeName() {
+        return "Artist"
     }
 
     override async create(

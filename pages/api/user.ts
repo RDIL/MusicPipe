@@ -1,35 +1,16 @@
 import type { NextApiRequest, NextApiResponse } from "next"
-import { BasicApiHandler, DeleteResponse } from "../../src/basicApiHandler"
+import { BasicApiHandler } from "../../src/basicApiHandler"
 import { User } from "../../src/api-generated"
 import prismaInstance from "../../src/prisma"
 import { hashPassword } from "../../src/accountService"
-import { ValidationError } from "../../src/errors"
 
-class UserApiHandler extends BasicApiHandler<User> {
-    override async delete(
-        req: NextApiRequest,
-        res: NextApiResponse<DeleteResponse>
-    ): Promise<void> {
-        const validate = this.createValidator(req)
+class UserApiHandler extends BasicApiHandler<User, typeof prismaInstance.user> {
+    override get prismaDelegate() {
+        return prismaInstance.user
+    }
 
-        validate("id")
-
-        const id = req.body.id as number
-
-        const user = await prismaInstance.user.findFirst({
-            where: { id },
-            select: { id: true, name: true },
-        })
-
-        if (!user) {
-            throw new ValidationError("User not found")
-        }
-
-        await prismaInstance.user.delete({
-            where: { id },
-        })
-
-        res.json({ success: true })
+    override get typeName() {
+        return "User"
     }
 
     override async create(
@@ -49,7 +30,7 @@ class UserApiHandler extends BasicApiHandler<User> {
         })
 
         if (withName) {
-            res.status(412).json("Artist already exists")
+            res.status(412).json("User already exists")
             return
         }
 
