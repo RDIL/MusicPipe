@@ -25,6 +25,32 @@ export abstract class BasicApiHandler<
 
     abstract get typeName(): string
 
+    async modify(req: NextApiRequest, res: NextApiResponse): Promise<void> {
+        // fetch the user to modify:
+        const validate = this.createValidator(req)
+
+        validate("id")
+
+        const id = req.body.id as string
+
+        // @ts-expect-error All the delegates have a findFirst method
+        const thing = await this.prismaDelegate.findFirst({
+            where: { id },
+        })
+
+        if (!thing) {
+            throw new ValidationError(`${this.typeName} not found`)
+        }
+
+        // @ts-expect-error All the delegates have a update method
+        await this.prismaDelegate.update({
+            where: { id },
+            data: req.body,
+        })
+
+        res.json({ success: true })
+    }
+
     async delete(
         req: NextApiRequest,
         res: NextApiResponse<DeleteResponse>
@@ -60,7 +86,7 @@ export abstract class BasicApiHandler<
                     await this.create(req, res)
                     break
                 case "PUT":
-                    await this.put(req, res)
+                    await this.modify(req, res)
                     break
                 case "DELETE":
                     await this.delete(req, res)
@@ -85,8 +111,4 @@ export abstract class BasicApiHandler<
         req: NextApiRequest,
         res: NextApiResponse<ApiType | string>
     ): Promise<void>
-
-    async put(req: NextApiRequest, res: NextApiResponse<ApiType | string>) {
-        res.status(500).send("Not implemented")
-    }
 }
