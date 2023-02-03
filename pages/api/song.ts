@@ -17,9 +17,12 @@ class SongApiHandler extends BasicApiHandler<Song, typeof prismaInstance.song> {
         res: NextApiResponse<Song | string>
     ) {
         const validate = this.createValidator(req)
+        console.log("CREATING")
 
         validate("title")
         validate("primaryArtistIds")
+
+        console.log("HERE 2")
 
         const song = req.body as Song
 

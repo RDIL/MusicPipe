@@ -32,7 +32,7 @@ export default function ArtistProfile({ artist, songs }: ArtistProfileProps) {
     const [creatingNew, setCreatingNew] = React.useState(false);
     const songsApi = usePageApi("/api/song");
 
-    const createSongCallback = (song: Partial<Song>) => {
+    const createSongCallback = (song: Partial<Song>, binary: string) => {
         setCreatingNew(false)
         songsApi.mutate(
             {
@@ -40,7 +40,15 @@ export default function ArtistProfile({ artist, songs }: ArtistProfileProps) {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(song),
+                body: JSON.stringify({
+                    ...song,
+                    primaryArtistIds: [],
+                    files: [
+                    {
+                        id: "example",
+                        binary: binary,
+                    }
+                ]}),
             },
             true
         )
@@ -58,7 +66,7 @@ export default function ArtistProfile({ artist, songs }: ArtistProfileProps) {
                 <LazyCreateUserDialog
                     callback={createSongCallback}
                     cancel={() => setCreatingNew(false)}
-                />
+                />  
             ) : null}
 
             <ArtistCard artist={artist} />
@@ -70,6 +78,11 @@ export default function ArtistProfile({ artist, songs }: ArtistProfileProps) {
             >
                 Add New Song
             </MarginBottomButton>
+
+            {songsApi.status === LoadingState.Loading ? (
+                <CircularProgress disableShrink />
+            ) : null}
+            {songsApi.alertBox}
 
             <Tracklist tracks={songs} />
         </main>

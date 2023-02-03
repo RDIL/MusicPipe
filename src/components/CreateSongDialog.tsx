@@ -3,23 +3,25 @@ import React from "react"
 import { TextField } from "@mui/material"
 import { Song } from "../api-generated"
 import { FileDropzone } from "./FileDropzone"
+import { LoadingState, usePageApi } from "../../src/components/hooks/usePageApi"
 
 export default function CreateSongDialog(props: {
-    callback: (song: Partial<Song>) => void
+    callback: (song: Partial<Song>, binary: string) => void
     cancel: () => void
 }) {
-    const [title, setTitle] = React.useState("")
+    const [title, setTitle] = React.useState("");
+    const [binary, setBinary] = React.useState("");
 
     const onDrop = React.useCallback((acceptedFiles: File[]) => {
         console.log(acceptedFiles[0])
 
-        var reader = new FileReader();
-        // var fileByteArray: number[] = [];
+
+        let reader = new FileReader();
         reader.readAsBinaryString(acceptedFiles[0]);
 
-        reader.onloadend = (evt: any) => {
-            var binary = evt.target.result;
-            console.log(binary);
+        reader.onloadend = (e: any) => {
+            let binary = e.target.result;
+            setBinary(binary);
         }
 
     }, [])
@@ -29,8 +31,8 @@ export default function CreateSongDialog(props: {
             type="Song"
             onCreate={() =>
                 props.callback({
-                    title,
-                })
+                    title
+                }, binary)
             }
             open={true}
             onClose={() => props.cancel()}
