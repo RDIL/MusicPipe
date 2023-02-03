@@ -52,7 +52,7 @@ model Artist {
     aliases String[] @default([])
 
     /// The artist's user account, can be null.
-    user   User?
+    user User?
 }
 
 /// A single song.
@@ -71,28 +71,10 @@ model Song {
     /// The CUIDs of the song's featured artists.
     featuredArtistIds String[]
 
-    /// The song's files.
-    files SongFile[]
-}
-
-/// A file for a specific song.
-model SongFile {
-    /// The numeric ID of the SongFile in the database.
-    id Int @id @default(autoincrement())
-
-    /// The file's name.
-    name String
-
     /// The raw file.
-    rawFile Bytes
-
-    /// The audio format.
-    format AudioFormat
-
-    /// The song this file is for.
-    songId String
-    /// The song model.
-    song   Song   @relation(fields: [songId], references: [id])
+    rawFile Bytes?
+    /// The raw file's format.
+    rawMime String?
 }
 
 /// A user's role controls what they can do in the application.

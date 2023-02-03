@@ -17,12 +17,9 @@ class SongApiHandler extends BasicApiHandler<Song, typeof prismaInstance.song> {
         res: NextApiResponse<Song | string>
     ) {
         const validate = this.createValidator(req)
-        console.log("CREATING")
 
         validate("title")
         validate("primaryArtistIds")
-
-        console.log("HERE 2")
 
         const song = req.body as Song
 
@@ -37,8 +34,8 @@ class SongApiHandler extends BasicApiHandler<Song, typeof prismaInstance.song> {
 
         await prismaInstance.song.create({
             data: {
-                title: song.title,
-                primaryArtistIds: song.primaryArtistIds,
+                ...song,
+                rawFile: Buffer.from(song.rawFile!),
             },
         })
 
@@ -48,9 +45,18 @@ class SongApiHandler extends BasicApiHandler<Song, typeof prismaInstance.song> {
 
 const apiHandler = new SongApiHandler()
 
+export const config = {
+    api: {
+        bodyParser: {
+            sizeLimit: "100mb",
+        },
+    },
+}
+
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<User | string>
 ) {
+    console.log("HERE 1 - API HANDLED")
     await apiHandler.dispatch(req, res)
 }
