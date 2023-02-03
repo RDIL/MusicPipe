@@ -1,4 +1,4 @@
-import { PrismaClient } from "./api-generated"
+import { PrismaClient } from "./api-generated";
 
 // @ts-expect-error Untyped global so it's not in code completion
 const prismaInstance = globalThis.prisma || new PrismaClient()

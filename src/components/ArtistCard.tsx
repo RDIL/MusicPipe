@@ -12,7 +12,7 @@ export interface ArtistCardProps {
 
 export function ArtistCard({ artist }: ArtistCardProps) {
     return (
-        <Card sx={{ display: "inline-flex" }}>
+        <Card sx={{ display: "flex", width: "20%" }}>
             <Box sx={{ display: "flex", flexDirection: "column" }}>
                 <CardContent sx={{ flex: "1 0 auto" }}>
                     <Typography component="div" variant="h5">

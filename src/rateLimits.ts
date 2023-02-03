@@ -42,6 +42,7 @@ export async function applyRateLimit(
 ) {
     await Promise.all(
         middlewares
+            // @ts-expect-error it's fine
             .map(applyMiddleware)
             .map((middleware) => middleware(request, response))
     )
